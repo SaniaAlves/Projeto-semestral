@@ -1,0 +1,79 @@
+CREATE DATABASE Restaurante;
+
+USE Restaurante;
+
+CREATE TABLE Clientes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20),
+    endereco TEXT
+);
+
+CREATE TABLE Pratos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco DECIMAL(10,2) NOT NULL,
+    tipo VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Bebidas (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Ingredientes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Pedidos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    cliente_id INT NOT NULL,
+    data_pedido DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Promocoes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    desconto DECIMAL(5,2),
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL
+);
+
+CREATE TABLE bebida_sabor (
+    bebida_id INT NOT NULL,
+    sabor VARCHAR(100) NOT NULL,
+    PRIMARY KEY (bebida_id, sabor),
+    FOREIGN KEY (bebida_id) REFERENCES Bebidas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE bebida_ingrediente (
+    bebida_id INT NOT NULL,
+    ingrediente_id INT NOT NULL,
+    PRIMARY KEY (bebida_id, ingrediente_id),
+    FOREIGN KEY (bebida_id) REFERENCES Bebidas(id) ON DELETE CASCADE,
+    FOREIGN KEY (ingrediente_id) REFERENCES Ingredientes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE pedido_prato (
+    pedido_id INT NOT NULL,
+    prato_id INT NOT NULL,
+    quantidade INT NOT NULL,
+    PRIMARY KEY (pedido_id, prato_id),
+    FOREIGN KEY (pedido_id) REFERENCES Pedidos(id) ON DELETE CASCADE,
+    FOREIGN KEY (prato_id) REFERENCES Pratos(id) ON DELETE CASCADE
+);
+
+CREATE TABLE pedido_bebida (
+    pedido_id INT NOT NULL,
+    bebida_id INT NOT NULL,
+    quantidade INT NOT NULL,
+    PRIMARY KEY (pedido_id, bebida_id),
+    FOREIGN KEY (pedido_id) REFERENCES Pedidos(id) ON DELETE CASCADE,
+    FOREIGN KEY (bebida_id) REFERENCES Bebidas(id) ON DELETE CASCADE
+);
